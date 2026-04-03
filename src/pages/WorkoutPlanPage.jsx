@@ -313,9 +313,17 @@ export default function WorkoutPlanPage() {
                     min={1}
                     disabled={active.rest}
                     value={it.sets}
-                    onChange={(e) =>
-                      updateItem(activeDay, it.id, { sets: Math.max(1, Number(e.target.value) || 1) })
-                    }
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (v === '') {
+                        updateItem(activeDay, it.id, { sets: '' });
+                        return;
+                      }
+                      const n = Number(v);
+                      updateItem(activeDay, it.id, {
+                        sets: Number.isFinite(n) && n >= 1 ? Math.round(n) : '',
+                      });
+                    }}
                     className="mt-1 w-full rounded-xl border border-white/10 bg-[#0c0c12] px-3 py-2 text-sm text-white outline-none focus:border-emerald-400/40 disabled:opacity-50"
                   />
                 </label>
@@ -326,16 +334,24 @@ export default function WorkoutPlanPage() {
                     min={1}
                     disabled={active.rest}
                     value={it.reps}
-                    onChange={(e) =>
-                      updateItem(activeDay, it.id, { reps: Math.max(1, Number(e.target.value) || 1) })
-                    }
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (v === '') {
+                        updateItem(activeDay, it.id, { reps: '' });
+                        return;
+                      }
+                      const n = Number(v);
+                      updateItem(activeDay, it.id, {
+                        reps: Number.isFinite(n) && n >= 1 ? Math.round(n) : '',
+                      });
+                    }}
                     className="mt-1 w-full rounded-xl border border-white/10 bg-[#0c0c12] px-3 py-2 text-sm text-white outline-none focus:border-emerald-400/40 disabled:opacity-50"
                   />
                 </label>
                 <div className="col-span-2 flex flex-col justify-end sm:col-span-1">
                   <span className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Total reps</span>
                   <div className="mt-1 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-center text-sm font-black tabular-nums text-emerald-100">
-                    {totalVolume(it)}
+                    {it.sets === '' || it.reps === '' ? 0 : totalVolume(it)}
                   </div>
                 </div>
               </div>

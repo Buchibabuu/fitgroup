@@ -3,7 +3,8 @@ import { supabase } from './supabase';
 
 /** Strictly more than 100 m */
 export const MIN_DISTANCE_M = 101;
-export const MIN_TIME_SECONDS = 30;
+// Allow quick runs; mm:ss on the clock is typically coarse (seconds only).
+export const MIN_TIME_SECONDS = 1;
 /** ~2:00/km — rejects absurd sprint typos */
 export const MIN_PACE_SEC_PER_KM = 120;
 /** ~25:00/km — rejects typos / non-runs */

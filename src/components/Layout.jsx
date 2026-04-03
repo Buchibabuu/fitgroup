@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import FitGroupLogo from './FitGroupLogo';
 import { useAuth } from '../hooks/useAuth';
+import { getStoredAvatarDataUrl } from '../lib/avatarStorage';
 
 const itemClass = ({ isActive }) =>
   [
@@ -12,19 +13,32 @@ const itemClass = ({ isActive }) =>
   ].join(' ');
 
 export default function Layout() {
-  const { profile } = useAuth();
+  const { profile, firebaseUser } = useAuth();
+  const uid = firebaseUser?.uid;
+  const storedAvatar = getStoredAvatarDataUrl(uid);
+  const avatarSrc = storedAvatar || profile?.avatar_url || null;
 
   return (
     <div className="min-h-dvh pb-32">
       <header className="sticky top-0 z-20 border-b border-white/10 bg-[#0b0b10]/85 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-lg items-center justify-between gap-3 px-4 py-3">
-          <div className="flex min-w-0 items-center gap-3">
-            <FitGroupLogo size={40} />
+        <div className="mx-auto flex max-w-lg items-center justify-between px-3 py-2">
+          <div className="flex min-w-0 items-center gap-2">
+            <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+              {avatarSrc ? (
+                <img src={avatarSrc} alt="" className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-amber-500/20 to-fuchsia-500/10 text-[14px] font-black text-amber-200">
+                  👤
+                </div>
+              )}
+            </div>
+
             <div className="min-w-0">
-              <p className="text-sm font-black tracking-tight text-white">FitGroup</p>
-              <p className="truncate text-[11px] text-zinc-500">{profile?.email}</p>
+              <p className="truncate text-[13px] font-black tracking-tight text-white">FitGroup</p>
+              <p className="truncate text-[10.5px] text-zinc-500">{profile?.email}</p>
             </div>
           </div>
+          <div className="w-8" aria-hidden />
         </div>
       </header>
 

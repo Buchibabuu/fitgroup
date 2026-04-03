@@ -127,8 +127,22 @@ export default function RunTrackerCard({ userId, dateYmd, onSaved, onSavedDetail
     setTimeSs('');
   }
 
+  function getSaveError() {
+    if (running) return 'Pause the stopwatch before saving.';
+    if (effectiveSeconds == null) return `Enter time (mm:ss) of at least ${MIN_TIME_SECONDS}s.`;
+    if (!Number.isFinite(distanceParsed) || distanceParsed <= 100) return `Enter distance greater than 100m.`;
+    if (!pacePreview) return 'Check your inputs (time + meters) and try again.';
+    if (pacePreview.invalid) return pacePreview.text;
+    return null;
+  }
+
   async function handleSave() {
-    if (!userId || !dateYmd || running || effectiveSeconds == null) return;
+    if (!userId || !dateYmd) return;
+    const err = getSaveError();
+    if (err) {
+      toast.error(err);
+      return;
+    }
     setSaving(true);
     try {
       const row = await upsertRunLog(userId, dateYmd, {
@@ -143,7 +157,7 @@ export default function RunTrackerCard({ userId, dateYmd, onSaved, onSavedDetail
       setElapsedMs(0);
       setTimeMm('');
       setTimeSs('');
-      setDistanceM(String(savedRow.distance_m));
+      setDistanceM('');
       if (isNewPersonalBest) {
         toast.success('New Personal Best 🏆');
       } else {
@@ -223,7 +237,7 @@ export default function RunTrackerCard({ userId, dateYmd, onSaved, onSavedDetail
               </button>
               <button
                 type="button"
-                disabled={saving || !canSave}
+                disabled={saving}
                 onClick={handleSave}
                 className="rounded-2xl border border-emerald-500/40 bg-emerald-500/15 py-3 text-sm font-black text-emerald-100 transition hover:bg-emerald-500/25 disabled:opacity-40"
               >

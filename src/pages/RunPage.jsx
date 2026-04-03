@@ -12,6 +12,7 @@ import {
   fetchRunForDate,
   fetchRunHistory,
   HISTORY_DISTANCE_FILTERS,
+  MIN_TIME_SECONDS,
 } from '../services/runs';
 
 function formatHistoryDate(ymd) {
@@ -57,7 +58,11 @@ export default function RunPage() {
         profile?.group_id ? fetchGroup(profile.group_id) : Promise.resolve(null),
       ]);
       const validMine =
-        mine?.distance_m > 100 && mine?.pace_per_km != null && mine.time_seconds >= 30 ? mine : null;
+        mine?.distance_m > 100 &&
+        mine?.pace_per_km != null &&
+        mine.time_seconds >= MIN_TIME_SECONDS
+          ? mine
+          : null;
       setMyRun(validMine);
       setHistory(hist);
       setBoard(boardResult);
